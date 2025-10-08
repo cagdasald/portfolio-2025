@@ -1,97 +1,160 @@
-'use client';
-
 import { useState } from 'react';
+import { Menu, X, Sun, Moon, Download } from 'lucide-react';
+import { Button } from './ui/Button';
+import { cn } from '../utils/cn';
 
-export default function Navigation() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+interface NavigationProps {
+  activeSection: string;
+  isDarkMode: boolean;
+  onToggleDarkMode: () => void;
+  onNavigate: (sectionId: string) => void;
+}
 
-  const navItems = [
-    { href: '#home', label: 'Ana Sayfa' },
-    { href: '#about', label: 'Hakkımda' },
-    { href: '#projects', label: 'Projeler' },
-    { href: '#contact', label: 'İletişim' },
-  ];
+const navItems = [
+  { name: 'About', id: 'hero' },
+  { name: 'Skills', id: 'skills' },
+  { name: 'Experience', id: 'experience' },
+  { name: 'Projects', id: 'projects' },
+  { name: 'Contact', id: 'contact' }
+];
 
-  const scrollToSection = (href: string) => {
-    const element = document.querySelector(href);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-    setIsMenuOpen(false);
+export const Navigation = ({ activeSection, isDarkMode, onToggleDarkMode, onNavigate }: NavigationProps) => {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const handleNavigate = (sectionId: string) => {
+    onNavigate(sectionId);
+    setIsMobileMenuOpen(false);
   };
 
   return (
-    <nav className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50">
-      <div className="container mx-auto px-4">
-        <div className="flex justify-between items-center h-16">
-          {/* Logo */}
-          <button 
-            onClick={() => scrollToSection('#home')}
-            className="text-2xl font-bold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+    <nav className={cn(
+      'fixed top-0 w-full z-50 backdrop-blur-md border-b transition-all duration-300',
+      isDarkMode 
+        ? 'bg-black/20 border-white/10' 
+        : 'bg-white/20 border-gray-100'
+    )}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
+        <div className="flex items-center justify-between">
+          <div 
+            className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent cursor-pointer transition-all duration-300" 
+            onClick={() => onNavigate('hero')}
           >
-            Portfolio
-          </button>
-
+            Çağdaş Aldoğan
+          </div>
+          
           {/* Desktop Navigation */}
-          <div className="hidden md:flex space-x-8">
+          <div className="hidden md:flex items-center space-x-8">
             {navItems.map((item) => (
-              <button
-                key={item.href}
-                onClick={() => scrollToSection(item.href)}
-                className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 font-medium"
+              <button 
+                key={item.name}
+                onClick={() => onNavigate(item.id)}
+                className={cn(
+                  'relative transition-all duration-300 hover:scale-105 transform',
+                  isDarkMode 
+                    ? `text-white/80 hover:text-white ${activeSection === item.id ? 'text-white' : ''}`
+                    : `text-gray-700 hover:text-gray-900 ${activeSection === item.id ? 'text-gray-900' : ''}`
+                )}
               >
-                {item.label}
+                {item.name}
+                {activeSection === item.id && (
+                  <div className="absolute -bottom-2 left-0 w-full h-0.5 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full animate-pulse" />
+                )}
               </button>
             ))}
           </div>
 
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden p-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
-          >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              {isMenuOpen ? (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              ) : (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
+          {/* Dark Mode Toggle & CV Download */}
+          <div className="flex items-center space-x-2">
+            {/* CV Download Button */}
+            <button
+              onClick={() => {
+                const link = document.createElement('a');
+                link.href = '/cv.pdf';
+                link.download = 'Cagdas_Aldogan_CV.pdf';
+                link.click();
+              }}
+              className={cn(
+                'group relative px-3 py-2 rounded-lg font-medium transition-all duration-300 hover:scale-105 transform active:scale-95 touch-manipulation',
+                'bg-gradient-to-r from-rose-400 to-pink-400 text-white shadow-md hover:shadow-lg',
+                'hover:from-rose-300 hover:to-pink-300',
+                'border border-rose-300/50 hover:border-rose-200'
               )}
-            </svg>
+            >
+              <div className="flex items-center">
+                <Download className="w-4 h-4 mr-1 group-hover:rotate-12 transition-transform duration-300" />
+                <span className="text-sm">CV</span>
+              </div>
+            </button>
+
+            {/* Dark Mode Toggle */}
+            <button
+              onClick={onToggleDarkMode}
+              className="p-2 rounded-lg transition-all duration-300 hover:scale-110 transform"
+            >
+              {isDarkMode ? (
+                <Sun className="w-6 h-6 text-yellow-400" />
+              ) : (
+                <Moon className="w-6 h-6 text-gray-700" />
+              )}
+            </button>
+          </div>
+
+          {/* Mobile Menu Button */}
+          <button 
+            className={cn(
+              'md:hidden p-2 transition-colors duration-300',
+              isDarkMode ? 'text-white/80 hover:text-white' : 'text-gray-700 hover:text-gray-900'
+            )}
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
 
-        {/* Mobile Navigation */}
-        {isMenuOpen && (
-          <div className="md:hidden py-4 border-t border-gray-200 dark:border-gray-700">
+        {/* Mobile Menu */}
+        {isMobileMenuOpen && (
+          <div className="md:hidden mt-4 pb-4">
             <div className="flex flex-col space-y-4">
               {navItems.map((item) => (
-                <button
-                  key={item.href}
-                  onClick={() => scrollToSection(item.href)}
-                  className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 font-medium py-2 text-left"
+                <button 
+                  key={item.name}
+                  onClick={() => handleNavigate(item.id)}
+                  className={cn(
+                    'text-left transition-all duration-300 py-2 px-4 rounded-lg',
+                    isDarkMode 
+                      ? `text-white/80 hover:text-white hover:bg-white/10 ${activeSection === item.id ? 'text-white bg-white/10' : ''}`
+                      : `text-gray-700 hover:text-gray-900 hover:bg-gray-100 ${activeSection === item.id ? 'text-gray-900 bg-gray-100' : ''}`
+                  )}
                 >
-                  {item.label}
+                  {item.name}
                 </button>
               ))}
+              
+              {/* Mobile CV Download Button */}
+              <button
+                onClick={() => {
+                  const link = document.createElement('a');
+                  link.href = '/cv.pdf';
+                  link.download = 'Cagdas_Aldogan_CV.pdf';
+                  link.click();
+                  setIsMobileMenuOpen(false);
+                }}
+                className={cn(
+                  'group relative px-4 py-3 rounded-lg font-medium transition-all duration-300 hover:scale-105 transform active:scale-95 touch-manipulation',
+                  'bg-gradient-to-r from-rose-400 to-pink-400 text-white shadow-md hover:shadow-lg',
+                  'hover:from-rose-300 hover:to-pink-300',
+                  'border border-rose-300/50 hover:border-rose-200'
+                )}
+              >
+                <div className="flex items-center justify-center">
+                  <Download className="w-4 h-4 mr-2 group-hover:rotate-12 transition-transform duration-300" />
+                  <span>Download CV</span>
+                </div>
+              </button>
             </div>
           </div>
         )}
       </div>
     </nav>
   );
-}
+};
