@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import { useState, useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import { Navigation } from '../src/components/Navigation';
 import { HeroSection } from '../src/components/HeroSection';
 import { SkillsSection } from '../src/components/SkillsSection';
@@ -14,7 +14,6 @@ import { useScroll } from '../src/hooks/useScroll';
 
 export default function Home() {
   const { isDarkMode, toggleDarkMode } = useDarkMode();
-  const scrollY = useScroll();
   
   const heroRef = useRef<HTMLDivElement>(null);
   const skillsRef = useRef<HTMLDivElement>(null);

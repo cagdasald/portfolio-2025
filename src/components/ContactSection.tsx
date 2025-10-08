@@ -44,14 +44,17 @@ export const ContactSection = ({ isDarkMode }: ContactSectionProps) => {
       // Reset success message after 3 seconds
       setTimeout(() => setSubmitStatus('idle'), 3000);
       
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error sending message:', error);
       
       // Check for specific Gmail API errors
-      if (error?.message?.includes('insufficient authentication scopes')) {
-        console.error('Gmail API Scope Error: Please reconnect Gmail account with full permissions');
-      } else if (error?.message?.includes('Invalid grant')) {
-        console.error('Gmail API Grant Error: Please reconnect Gmail account');
+      if (error && typeof error === 'object' && 'message' in error) {
+        const errorMessage = (error as { message: string }).message;
+        if (errorMessage.includes('insufficient authentication scopes')) {
+          console.error('Gmail API Scope Error: Please reconnect Gmail account with full permissions');
+        } else if (errorMessage.includes('Invalid grant')) {
+          console.error('Gmail API Grant Error: Please reconnect Gmail account');
+        }
       }
       
       setSubmitStatus('error');
@@ -106,7 +109,7 @@ export const ContactSection = ({ isDarkMode }: ContactSectionProps) => {
             'text-3xl sm:text-4xl md:text-5xl font-bold mb-4 transition-colors duration-1000',
             isDarkMode ? 'text-white' : 'text-gray-900'
           )}>
-            Let's Work Together
+            Let&apos;s Work Together
           </h2>
           <p className={cn(
             'text-lg sm:text-xl transition-colors duration-1000',
@@ -258,7 +261,7 @@ export const ContactSection = ({ isDarkMode }: ContactSectionProps) => {
               {submitStatus === 'success' && (
                 <div className="mt-4 p-4 bg-green-500/10 border border-green-500/20 rounded-lg">
                   <p className="text-green-400 text-center font-medium">
-                    ✅ Message sent successfully! I'll get back to you soon.
+                    ✅ Message sent successfully! I&apos;ll get back to you soon.
                   </p>
                 </div>
               )}

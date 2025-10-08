@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { ExternalLink, Github } from 'lucide-react';
+import Image from 'next/image';
 import { Card } from './ui/Card';
 import { projects } from '../constants/data';
 import { cn } from '../utils/cn';
@@ -66,10 +67,12 @@ export const ProjectsSection = ({ isDarkMode }: ProjectsSectionProps) => {
             >
               <div className={`h-48 bg-gradient-to-br ${project.gradient} flex items-center justify-center relative overflow-hidden group-hover:scale-110 transition-transform duration-500`}>
                 {project.imageType === 'image' ? (
-                  <img 
+                  <Image 
                     src={project.image} 
                     alt={project.title}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    fill
+                    className="object-cover group-hover:scale-110 transition-transform duration-500"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   />
                 ) : (
                   <span className="text-6xl group-hover:scale-110 transition-transform duration-500">

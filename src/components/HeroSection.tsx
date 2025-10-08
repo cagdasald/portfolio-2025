@@ -1,6 +1,5 @@
 import { Button } from './ui/Button';
 import { cn } from '../utils/cn';
-import { Download } from 'lucide-react';
 
 interface HeroSectionProps {
   isDarkMode: boolean;

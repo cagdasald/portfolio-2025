@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Menu, X, Sun, Moon, Download } from 'lucide-react';
-import { Button } from './ui/Button';
 import { cn } from '../utils/cn';
 
 interface NavigationProps {
